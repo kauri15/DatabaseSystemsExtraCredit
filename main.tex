@@ -1,89 +1,133 @@
 \documentclass{article}
 \usepackage{graphicx} 
-\usepackage{amsmath}
-\usepackage{amssymb}
 
-\title{Database Systems HW 1 for Question 4}
+\title{Database Systems HW 2 Extra Credit}
 \author{Ishneet Kaur}
-\date{February 3 2026}
+\date{February 17 2026}
 
 \begin{document}
 
 \maketitle
-\section{Question 4}
-You are given the following set $F$ of functional dependencies for a relation $R(A, B, C, D, E, F)$.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Question 2}
+
+You are given the following set of functional dependencies for relation
+R(A, B, C, D, E, F, G, H):
+
 \[
-F = \{ A \rightarrow D,\; C \rightarrow BD,\; BD \rightarrow E,\; E \rightarrow CDF \}
+F = \{A \to DGH,\; BD \to EG,\; FH \to BC,\; D \to CEF\}
+\]
+Is the following decomposition lossless?
+\[
+R_1(B, E, F)
+\]
+\[
+R_2(A, B)
+\]
+\[
+R_3(F, G, H)
+\]
+\[
+R_4(B, C, D, G, H)
 \]
 
-Is $AC \rightarrow CEF$ implied by $F$? In other words, is $AC \rightarrow CEF \in F^+$?
-If yes, use the inference rules to show how you can obtain this functional dependency from the
-dependencies in $F$. 
-\\\\
+Show your work with the chase algorithm. \\\\
+---------------------------------------------------------------------------------------------------------
 
 \subsection*{Solution}
+Initial Chase Table:
 
-Yes, $AC \rightarrow CEF$ is implied by $F$. This can be shown by computing the closure of $AC$ and by using Armstrong’s inference rules.
-
-\subsubsection*{Part 1: Compute $(AC)^+$}
-With $A \rightarrow D$, we can add $D$:
 \[
-(AC)^+ = \{A, C, D\}
+\begin{array}{c|cccccccc}
+ & A & B & C & D & E & F & G & H\\
+\hline
+R_1 & a_1 & b & c_1 & d_1 & e & f & g_1 & h_1\\
+R_2 & a & b & c_2 & d_2 & e_2 & f_2 & g_2 & h_2\\
+R_3 & a_3 & b_3 & c_3 & d_3 & e_3 & f & g & h\\
+R_4 & a_4 & b & c & d & e_4 & f_4 & g & h\\
+\end{array}
 \]
 
-With C now being in the closure, we can use the functional dependency $C \rightarrow BD$ to add $B$:
+---------------------------------------------------------------------------------------------------
+
+Apply $A \to DGH$
+
+Row 2 has A:
+
 \[
-(AC)^+ = \{A, B, C, D\}
+\begin{array}{c|cccccccc}
+ & A & B & C & D & E & F & G & H\\
+\hline
+R_1 & a_1 & b & c_1 & d_1 & e & f & g_1 & h_1\\
+R_2 & a & b & c_2 & d & e_2 & f_2 & g & h\\
+R_3 & a_3 & b_3 & c_3 & d_3 & e_3 & f & g & h\\
+R_4 & a_4 & b & c & d & e_4 & f_4 & g & h\\
+\end{array}
 \]
 
-With both attributes B and D in the closure, we can use the functional dependency $BD \rightarrow E$ to add $E$:
+---------------------------------------------------------------------------------------------------
+
+
+Apply $BD \to EG$
+
+Rows 2,4 share B and D:
+
 \[
-(AC)^+ = \{A, B, C, D, E\}
+\begin{array}{c|cccccccc}
+ & A & B & C & D & E & F & G & H\\
+\hline
+R_1 & a_1 & b & c_1 & d_1 & e & f & g_1 & h_1\\
+R_2 & a & b & c_2 & d & e & f_2 & g & h\\
+R_3 & a_3 & b_3 & c_3 & d_3 & e_3 & f & g & h\\
+R_4 & a_4 & b & c & d & e & f_4 & g & h\\
+\end{array}
 \]
 
-With this updated closure, we can now use the functional dependency $E \rightarrow CDF$ to add $F$:
+---------------------------------------------------------------------------------------------------
+
+Apply $FH \to BC$
+
+Row 3 has F and H:
+
 \[
-(AC)^+ = \{A, B, C, D, E, F\}
+\begin{array}{c|cccccccc}
+ & A & B & C & D & E & F & G & H\\
+\hline
+R_1 & a_1 & b & c_1 & d_1 & e & f & g_1 & h_1\\
+R_2 & a & b & c_2 & d & e & f_2 & g & h\\
+R_3 & a_3 & b & c & d_3 & e_3 & f & g & h\\
+R_4 & a_4 & b & c & d & e & f_4 & g & h\\
+\end{array}
 \]
 
-Since all attributes are included in $(AC)^+$ including CEF, we conclude:
+---------------------------------------------------------------------------------------------------
+
+Apply $D \to CEF$
+
+Rows 2 and 4 share D:
+
 \[
-AC \rightarrow CEF \in F^+
+\begin{array}{c|cccccccc}
+ & A & B & C & D & E & F & G & H\\
+\hline
+R_1 & a_1 & b & c_1 & d_1 & e & f & g_1 & h_1\\
+R_2 & a & b & c & d & e & f & g & h\\
+R_3 & a_3 & b & c & d_3 & e_3 & f & g & h\\
+R_4 & a_4 & b & c & d & e & f & g & h\\
+\end{array}
 \]
 
-\subsubsection*{Part 2: Inference Rules}
-We will now examine if the inference rules confirm $AC \rightarrow $ CEF \\\\
-We will start with a given functional dependency. \\\\
-Given: $A \rightarrow $ D \\\\
-Next, we can use augmentation to add C to both sides as we want the left side to represent AC. \\\\
-Augmentation: $AC \rightarrow $ CD\\\\
-We can now decompose this to consolidate to the variables we are looking for on the right side. \\\\
-Splitting: $AC \rightarrow $ C\\\\
-With C now on the right side alone, we can use another given functional dependency. \\\\
-Given: $C \rightarrow $ BD\\\\
-We can now apply transitivity. \\\\
-Transitivity: $AC \rightarrow $ C and $C \rightarrow $ BD so $AC \rightarrow $ BD \\\\
-This now gives us another given functional dependency on the right. \\\\
-Given: $BD \rightarrow $ E\\\\
-We can apply transitivity again. \\\\
-Transitivity: $AC \rightarrow $ BD and $BD \rightarrow $ E so $AC \rightarrow $ E \\\\
-Now with all of the implications we have seen for AC, we can combine them to the right side. \\\\
-Combining: $AC \rightarrow $ C and $AC \rightarrow $ BD and $AC \rightarrow $ E so $AC \rightarrow $ BCDE \\\\
-To get the last attribute, F, we can use another given functional dependency. For this, we can split to get the E which is on the left side of the functional dependency that will give us F. \\\\
-Splitting: $AC \rightarrow $ E\\\\
-Given: $E \rightarrow $ CDF\\\\
-Transitivity: $AC \rightarrow $ E and $E \rightarrow $ CDF so $AC \rightarrow $ CDF \\\\
-We can now combine everything together and see everything that AC implies. \\\\
-Combining: $AC \rightarrow $ BCDE and $AC \rightarrow $ CDF so $AC \rightarrow $ BCDEF \\\\
-To confirm the final answer, we can use splitting to get the exact attributes we are trying to validate. \\\\
-Splitting: $AC \rightarrow $ CEF\\\\
+---------------------------------------------------------------------------------------------------
 
-\subsubsection*{Conclusion}
+Row 2 is now:
 
-Therefore, $AC \rightarrow CEF$ is implied by the given set of functional dependencies so 
 \[
-AC \rightarrow CEF \in F^+
+(a,b,c,d,e,f,g,h)
 \]
 
+Row without subscripts exists.
+
+Therefore, decomposition is \textbf{lossless}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \end{document}
-
